@@ -525,13 +525,11 @@ impl From<Value> for serde_json::Value {
                 use time::format_description::well_known::Rfc2822;
                 serde_json::Value::String(timestamp.format(&Rfc2822).unwrap())
             }
-            Value::List(list) => {
-                let mut values = vec![];
-                for v in list {
-                    values.push(v.into());
-                }
-                serde_json::Value::Array(values)
-            }
+            Value::List(list) => serde_json::Value::Array(
+                list.into_iter()
+                    .map(Into::into)
+                    .collect()
+            ),
             Value::Record(_) => serde_json::Value::Null,
             Value::Column(_) => serde_json::Value::Null,
             Value::Function(_) => serde_json::Value::Null,
